@@ -1,0 +1,537 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Control System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Landing Page */
+        .landing {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .landing h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #00d4ff, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .landing p {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #00d4ff;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #00d4ff, #ff6b9d);
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Login Screen */
+        .login-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 400px;
+            max-width: 500px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            color: #00d4ff;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #00d4ff, #ff6b9d);
+            border: none;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            flex-direction: row;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .dashboard.active {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00d4ff;
+            border-left-color: #00d4ff;
+        }
+
+        .nav-item.active {
+            background: rgba(0, 212, 255, 0.15);
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card h2 {
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .plan-item, .weak-topic {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #ff6b9d;
+            transition: all 0.3s ease;
+        }
+
+        .plan-item:hover, .weak-topic:hover {
+            transform: translateX(5px);
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 2rem 0;
+            color: #00d4ff;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .timer-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-timer {
+            background: #00d4ff;
+            color: white;
+        }
+
+        .stop-timer {
+            background: #ff6b9d;
+            color: white;
+        }
+
+        .timer-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .add-btn {
+            background: #00d4ff;
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .add-btn:hover {
+            background: #00b8d4;
+        }
+
+        .priority-high { border-left-color: #ff4444; }
+        .priority-medium { border-left-color: #ffaa00; }
+        .priority-low { border-left-color: #44ff44; }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #ff6b9d);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .login-container {
+                min-width: 90vw;
+                margin: 1rem;
+            }
+            
+            .landing h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Screen -->
+    <div id="landing" class="screen active">
+        <div class="landing">
+            <h1>Study Control System</h1>
+            <p>Master JEE, NEET, NDA, KCET & Class 6-12 with AI-powered study tracking, weak topic analysis, and smart timers built for Indian students.</p>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <h3>📅 Daily Study Plan</h3>
+                    <p>AI generates personalized study plans prioritizing weak topics, revision, and new concepts.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 Weak Topic Tracking</h3>
+                    <p>Automatically categorize and track your weak areas with smart priority system.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⏱️ Study Timer</h3>
+                    <p>Pomodoro-style timer with session tracking and total study time analytics.</p>
+                </div>
+            </div>
+            
+            <button class="start-btn" onclick="showScreen('login')">🚀 Start Your Journey</button>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login" class="screen">
+        <div class="login-container">
+            <h2>Login</h2>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label>Class/Exam</label>
+                <select id="classSelect" required>
+                    <option value="">Select Class/Exam</option>
+                    <option value="Class 6">Class 6</option>
+                    <option value="Class 7">Class 7</option>
+                    <option value="Class 8">Class 8</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                    <option value="JEE">JEE</option>
+                    <option value="NEET">NEET</option>
+                    <option value="NDA">NDA</option>
+                    <option value="KCET">KCET</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <select id="subjectSelect" required>
+                    <option value="">Select Subject</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Maths">Maths</option>
+                    <option value="Biology">Biology</option>
+                    <option value="English">English</option>
+                    <option value="Computer Science">Computer Science</option>
+                </select>
+            </div>
+            <button class="login-btn" onclick="login()">Enter Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-item active" onclick="showContent('dashboard')">📊 Dashboard</div>
+            <div class="nav-item" onclick="showContent('daily-plan')">📅 Daily Plan</div>
+            <div class="nav-item" onclick="showContent('weak-topics')">🎯 Weak Topics</div>
+            <div class="nav-item" onclick="showContent('timer')">⏱️ Timer</div>
+            <div class="nav-item" onclick="showContent('progress')">📈 Progress</div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Dashboard Content -->
+            <div id="dashboard-content" class="content-section active">
+                <div class="card">
+                    <h2>👋 Welcome Back!</h2>
+                    <p id="welcome-text">Complete your profile to get started with personalized study recommendations.</p>
+                </div>
+            </div>
+
+            <!-- Daily Plan -->
+            <div id="daily-plan-content" class="content-section">
+                <div class="card">
+                    <h2>📅 Today's Study Plan</h2>
+                    <div id="dailyPlanList">
+                        <div class="plan-item">🔥 Weak Topics (45 min) - Review high priority topics first</div>
+                        <div class="plan-item">📖 Revision (30 min) - Previous day concepts</div>
+                        <div class="plan-item">✨ New Study (60 min) - Fresh concepts & practice</div>
+                        <div class="plan-item">⚡ Quick Test (15 min) - Self-assessment</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weak Topics -->
+            <div id="weak-topics-content" class="content-section">
+                <div class="card">
+                    <h2>🎯 Weak Topics Tracker</h2>
+                    <p>Add topics you're struggling with. Priority auto-updates based on frequency.</p>
+                    <div class="input-group">
+                        <input type="text" id="weakTopicInput" placeholder="Enter weak topic (e.g., Vectors, Organic Chemistry)">
+                        <button class="add-btn" onclick="addWeakTopic()">Add Topic</button>
+                    </div>
+                    <div id="weakTopicsList"></div>
+                </div>
+            </div>
+
+            <!-- Timer -->
+            <div id="timer-content" class="content-section">
+                <div class="card">
+                    <h2>⏱️ Study Timer</h2>
+                    <div class="timer-display" id="timerDisplay">00:00:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn start-timer" id="startBtn" onclick="startTimer()">▶️ Start</button>
+                        <button class="timer-btn stop-timer" id="stopBtn" onclick="stopTimer()" disabled>⏹️ Stop</button>
+                    </div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <div>Total Study Time: <span id="totalTime" style="color: #00d4ff; font-size: 1.5rem; font-weight: 700;">00:00:00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div id="progress-content" class="content-section">
+                <div class="card">
+                    <h2>📈 Progress Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-number" id="totalStudyTimeStat">00:00:00</span>
+                            <div>Total Study Time</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="weakTopicsCount">0</span>
+                            <div>Weak Topics</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="completionPercent">0%</span>
+                            <div>Completion</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width:
